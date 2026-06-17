@@ -3,9 +3,9 @@ name: Deploy ai Worker
 on:
   push:
     branches:
-      - main
+      - "*"
     tags:
-      - "v*"
+      - "*"
   workflow_dispatch:
     inputs:
       environment:
