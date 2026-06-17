@@ -1,13 +1,16 @@
-import type { Env, TelegramUpdate } from "./types/index.js";
+import type {
+  Env,
+  TelegramUpdate,
+  DiscordInteraction,
+  OpenAIRequest,
+} from "./types/index.js";
 import { processTelegramUpdate, checkStatus } from "./handlers/telegram.js";
 import { handleTestGUI } from "./handlers/test-gui.js";
-
-interface CloudflareWorkerRequest extends Request {
-  env: Env;
-}
+import { handleDiscordInteraction } from "./handlers/discord.js";
+import { handleOpenAIChatCompletions } from "./handlers/openai.js";
 
 export default {
-  async fetch(req: CloudflareWorkerRequest, env: Env): Promise<Response> {
+  async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
 
     // test gui vibes
@@ -40,21 +43,57 @@ export default {
       return new Response("✨ sparky api is vibin");
     }
 
-    // only telegram stuff pls
-    if (url.pathname !== "/telegram") {
-      return new Response("nah");
-    }
     // we only rock with POST fr
     if (req.method !== "POST") {
       return new Response("ok");
     }
 
-    try {
-      const update = (await req.json()) as TelegramUpdate;
-      return await processTelegramUpdate(env, update);
-    } catch (error) {
-      console.log("sparky took an L:", error);
-      return new Response("ok");
+    // discord webhook
+    if (url.pathname === "/discord") {
+      try {
+        const interaction = (await req.json()) as DiscordInteraction;
+        return await handleDiscordInteraction(env, interaction);
+      } catch (error) {
+        console.log("discord took an L:", error);
+        return new Response("ok");
+      }
     }
+
+    // openai-like endpoint
+    if (url.pathname === "/v1/chat/completions") {
+      try {
+        const requestBody = (await req.json()) as OpenAIRequest;
+        const authHeader = req.headers.get("Authorization") || undefined;
+        return await handleOpenAIChatCompletions(env, requestBody, authHeader);
+      } catch (error) {
+        console.log("openai endpoint took an L:", error);
+        return new Response(
+          JSON.stringify({
+            error: {
+              message: "Invalid request",
+              type: "invalid_request_error",
+            },
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
+
+    // telegram webhook (default)
+    if (url.pathname === "/telegram") {
+      try {
+        const update = (await req.json()) as TelegramUpdate;
+        return await processTelegramUpdate(env, update);
+      } catch (error) {
+        console.log("sparky took an L:", error);
+        return new Response("ok");
+      }
+    }
+
+    // unknown path
+    return new Response("nah");
   },
 };
