@@ -67,7 +67,7 @@ jobs:
           DRY: ${{ steps.env.outputs.DRY }}
         run: |
           set -e
-          CMD="wrangler deploy --env ${ENV}"
+          CMD="wrangler deploy --env ${ENV} ."
 
           # If account id secret is provided but not present in wrangler.toml, pass it explicitly to wrangler
           if [ -n "${CF_ACCOUNT_ID}" ]; then
