@@ -1,0 +1,88 @@
+name: Deploy ai Worker
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select the Wrangler environment to deploy (wrangler.toml env.*)."
+        required: true
+        type: choice
+        options:
+          - beta
+          - stable
+        default: stable
+      dry_run:
+        description: "If true, perform a dry run (wrangler deploy --dry-run)"
+        required: false
+        default: "false"
+
+jobs:
+  deploy:
+    name: Deploy ai
+    runs-on: ubuntu-latest
+    # Choose the GitHub Environment dynamically: tags -> stable, push -> beta, workflow_dispatch -> selected input
+    environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || (startsWith(github.ref, 'refs/tags/') && 'stable') || 'beta' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install Wrangler
+        # Install globally so wrangler is available as a CLI command
+        run: npm install -g wrangler@latest
+
+      - name: Determine deploy environment
+        id: env
+        run: |
+          # Determine environment to deploy to:
+          # - If workflow_dispatch: use the selected input
+          # - If this run was triggered by a tag push (refs/tags/*): deploy 'stable'
+          # - Otherwise (branch push): deploy 'beta'
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "ENV=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "DRY=${{ github.event.inputs.dry_run }}" >> $GITHUB_OUTPUT
+          elif echo "${GITHUB_REF}" | grep -q "^refs/tags/"; then
+            echo "ENV=stable" >> $GITHUB_OUTPUT
+            echo "DRY=false" >> $GITHUB_OUTPUT
+          else
+            echo "ENV=beta" >> $GITHUB_OUTPUT
+            echo "DRY=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          ENV: ${{ steps.env.outputs.ENV }}
+          DRY: ${{ steps.env.outputs.DRY }}
+        run: |
+          set -e
+          CMD="wrangler deploy --env ${ENV}"
+
+          # If account id secret is provided but not present in wrangler.toml, pass it explicitly to wrangler
+          if [ -n "${CF_ACCOUNT_ID}" ]; then
+            CMD="${CMD} --account-id ${CF_ACCOUNT_ID}"
+          fi
+
+          if [ "${DRY}" = "true" ] || [ "${DRY}" = "True" ]; then
+            CMD="${CMD} --dry-run"
+          fi
+
+          echo "Running: ${CMD}"
+          ${CMD}
+
+# Notes:
+# - Push to 'main' branch will trigger a beta deployment.
+# - Pushing a tag matching 'v*' (for example 'v1.2.3') will trigger a stable deployment.
+# - Manual runs (Run workflow) still available; select 'beta' or 'stable' from the dropdown.
+# - Make sure to add CF_API_TOKEN as a repository or environment secret. For stricter controls, create GitHub Environments named 'beta' and 'stable' and store secrets there.

@@ -1,3 +1,18 @@
-name = "sparky-worker"
-main = "index.js"
-compatibility_date = "2026-01-01"
+name = "ai"
+main = "src/index.ts"
+compatibility_date = "2026-06-15"
+account_id = "d69fca5b1e6262c9ef8b859207cbdee9"
+
+[[kv_namespaces]]
+binding = "TELEGRAM_AI"
+id = "2a6c53602720460ebf8f14c1425811c1"
+
+[env.beta]
+name = "ai-beta"
+compatibility_date = "2026-06-15"
+vars = { ENVIRONMENT = "beta" }
+
+[env.stable]
+name = "ai"
+compatibility_date = "2026-06-15"
+vars = { ENVIRONMENT = "stable" }
