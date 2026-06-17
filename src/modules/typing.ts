@@ -1,8 +1,6 @@
 import type { Env, TypingSignal } from "../types/index.js";
 
-/**
- * Send typing indicator loop to Telegram chat
- */
+// send those typing vibes so they know we're thinking
 export async function typingLoop(
   env: Env,
   chatId: number,
@@ -25,6 +23,6 @@ export async function typingLoop(
       await new Promise((resolve) => setTimeout(resolve, 1500));
     }
   } catch {
-    // Silent fail for typing indicator
+    // meh, if typing fails it fails
   }
 }

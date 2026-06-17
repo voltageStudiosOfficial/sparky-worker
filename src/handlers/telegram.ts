@@ -10,9 +10,7 @@ import {
 import { loadHistory, saveHistory, clearHistory } from "../services/memory.js";
 import { callAI } from "../services/ai.js";
 
-/**
- * Handle /start command
- */
+// /start command vibes
 async function handleStart(
   env: Env,
   chatId: number,
@@ -29,7 +27,11 @@ async function handleStart(
     content: `@${username}: hello`,
   };
 
-  const data = await callAI(env, [...getSystemPrompt(env), helloMsg], getModel(env) || "");
+  const data = await callAI(
+    env,
+    [...getSystemPrompt(env), helloMsg],
+    getModel(env) || "",
+  );
 
   signal.done = true;
   await typingTask;
@@ -39,9 +41,7 @@ async function handleStart(
   await sendMessage(env, chatId, reply, msgId);
 }
 
-/**
- * Handle /reset command
- */
+// reset the convo (clean slate energy)
 async function handleReset(
   env: Env,
   chatId: number,
@@ -51,9 +51,7 @@ async function handleReset(
   await sendMessage(env, chatId, "hello", msgId);
 }
 
-/**
- * Handle normal message
- */
+// handle ur messages like a boss
 async function handleMessage(
   env: Env,
   chatId: number,
@@ -86,9 +84,7 @@ async function handleMessage(
   await sendMessage(env, chatId, reply, msgId);
 }
 
-/**
- * Process Telegram webhook update
- */
+// main webhook processor energy
 export async function processTelegramUpdate(
   env: Env,
   update: TelegramUpdate,
@@ -108,32 +104,30 @@ export async function processTelegramUpdate(
     await sendMessage(
       env,
       chatId,
-      "Seems like Tanner forgot to choose the model.",
+      "yo tanner forgot the model 💀 go fix that",
       msgId,
     );
     return new Response("no_model");
   }
 
-  // /start command
+  // /start szn
   if (text === "/start") {
     await handleStart(env, chatId, msgId, username);
     return new Response("start");
   }
 
-  // /reset command
+  // /reset vibes
   if (text === "/reset") {
     await handleReset(env, chatId, msgId);
     return new Response("reset");
   }
 
-  // Normal message
+  // just a normal message, let's go
   await handleMessage(env, chatId, msgId, update);
   return new Response("ok");
 }
 
-/**
- * Check bot status endpoint
- */
+// is sparky feelin ok tho?
 export async function checkStatus(env: Env): Promise<Response> {
   const ok = await checkBotStatus(env);
   return new Response(ok ? "OK" : "FAIL", {

@@ -1,8 +1,6 @@
 import type { Env, TelegramMessage, ChatMessage } from "../types/index.js";
 
-/**
- * Send a message to Telegram chat
- */
+// send that message fr fr
 export async function sendMessage(
   env: Env,
   chatId: number,
@@ -22,12 +20,9 @@ export async function sendMessage(
   );
 }
 
-/**
- * Format Telegram message into chat message format
- */
+// telegram message but make it pretty
 export function formatUserMessage(msg: TelegramMessage): ChatMessage {
-  const username =
-    msg.from?.username || msg.from?.first_name || "user";
+  const username = msg.from?.username || msg.from?.first_name || "user";
 
   return {
     role: "user",
@@ -35,15 +30,13 @@ export function formatUserMessage(msg: TelegramMessage): ChatMessage {
   };
 }
 
-/**
- * Check bot status
- */
+// is the bot alive? let's find out
 export async function checkBotStatus(env: Env): Promise<boolean> {
   try {
     const response = await fetch(
       `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/getMe`,
     );
-    const data = await response.json() as { ok?: boolean };
+    const data = (await response.json()) as { ok?: boolean };
     return data?.ok && !!env.OPENROUTER_API_KEY;
   } catch {
     return false;

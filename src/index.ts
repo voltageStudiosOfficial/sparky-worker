@@ -10,20 +10,20 @@ export default {
   async fetch(req: CloudflareWorkerRequest, env: Env): Promise<Response> {
     const url = new URL(req.url);
 
-    // Test GUI endpoint
+    // test gui vibes
     if (url.pathname === "/test" || url.pathname === "/test-gui") {
       return await handleTestGUI(req, env);
     }
 
-    // Status endpoint (for monitoring)
+    // gimme the status check
     if (url.pathname === "/status" && req.method === "GET") {
       return await checkStatus(env);
     }
-    // Set webhook endpoint (for Telegram)
+    // webhook szn
     if (url.pathname === "/set-webhook" && req.method === "GET") {
       const webhookUrl = env.WEBHOOK_URL;
       if (!webhookUrl) {
-        return new Response("WEBHOOK_URL not set in environment variables", {
+        return new Response("yo webhook url is missing fr 😭", {
           status: 500,
         });
       }
@@ -35,16 +35,16 @@ export default {
         headers: { "Content-Type": "application/json" },
       });
     }
-    // GET requests
+    // handle GET requests
     if (req.method === "GET") {
-      return new Response("Sparky API online");
+      return new Response("✨ sparky api is vibin");
     }
 
-    // Only process Telegram webhook
+    // only telegram stuff pls
     if (url.pathname !== "/telegram") {
-      return new Response("ignored");
+      return new Response("nah");
     }
-    // Only accept POST
+    // we only rock with POST fr
     if (req.method !== "POST") {
       return new Response("ok");
     }
@@ -53,7 +53,7 @@ export default {
       const update = (await req.json()) as TelegramUpdate;
       return await processTelegramUpdate(env, update);
     } catch (error) {
-      console.log("SPARKY ERROR:", error);
+      console.log("sparky took an L:", error);
       return new Response("ok");
     }
   },

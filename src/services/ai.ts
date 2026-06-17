@@ -1,11 +1,8 @@
 import type { Env, ChatMessage, AIResponse } from "../types/index.js";
 
-const OPENROUTER_URL =
-  "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-/**
- * Call OpenRouter AI API
- */
+// hit up the ai gods and ask em for wisdom
 export async function callAI(
   env: Env,
   messages: ChatMessage[],
