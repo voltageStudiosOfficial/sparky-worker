@@ -3,14 +3,14 @@ import type { Env } from "../types/index.js";
 /**
  * Transcription service for voice messages
  * 
- * Note: This requires an external transcription API.
- * Options include:
- * - OpenAI Whisper API
+ * Uses OpenRouter's whisper-1 model which has a free tier.
+ * Requires OPENROUTER_API_KEY to be set.
+ * 
+ * Alternative options you could implement:
+ * - OpenAI Whisper API (direct)
  * - Google Cloud Speech-to-Text
  * - AWS Transcribe
- * - OpenRouter audio models (e.g., whisper-1)
- * 
- * Currently implements OpenRouter Whisper as the default.
+ * - Local Whisper instance
  */
 
 const OPENROUTER_AUDIO_URL = "https://openrouter.ai/api/v1/audio/transcriptions";

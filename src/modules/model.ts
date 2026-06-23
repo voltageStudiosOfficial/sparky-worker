@@ -1,11 +1,18 @@
 import type { Env } from "../types/index.js";
 
-const FALLBACK_MODEL = "openrouter/gpt-oss-20b";
+// Use the free GPT-OSS 20B endpoint from OpenRouter
+// This is the free :free endpoint that doesn't cost anything
+const FREE_MODEL = "openrouter/gpt-oss-20b";
 
 // grab the ai model we're rockin with
-// falls back to GPT-OSS 20B free endpoint if not configured
+// Always uses the free GPT-OSS 20B :free endpoint
 export function getModel(env: Env): string {
-  return env.PRIMARY_MODEL && env.PRIMARY_MODEL.trim()
-    ? env.PRIMARY_MODEL
-    : FALLBACK_MODEL;
+  // Always use the free GPT-OSS 20B model
+  // PRIMARY_MODEL is ignored - we always use the free endpoint
+  return FREE_MODEL;
+}
+
+// Get the free model explicitly
+export function getFreeModel(): string {
+  return FREE_MODEL;
 }

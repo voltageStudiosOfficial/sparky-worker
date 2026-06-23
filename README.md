@@ -53,11 +53,12 @@ Sparky is licensed under the AGPLv3 License. See the [LICENSE](https://github.co
    DISCORD_APP_ID=your_discord_application_id
    ```
    
-   **Note:** If `PRIMARY_MODEL` is not set, Sparky will automatically use `openrouter/gpt-oss-20b` (free endpoint).
+   **Note:** Sparky now **always** uses `openrouter/gpt-oss-20b` (the free :free endpoint) for chat responses.
+   The `PRIMARY_MODEL` variable is ignored - we always use the free GPT-OSS 20B.
    
-   **For voice messages:** Voice transcription requires `OPENROUTER_API_KEY` and uses OpenRouter's whisper-1 model.
+   **For voice messages:** Voice transcription requires `OPENROUTER_API_KEY` and uses OpenRouter's free whisper-1 model.
    
-   **For images:** Vision models (like gpt-4o, claude-3, gemini-pro-vision) can analyze images sent as photos or documents.
+   **For images:** GPT-OSS 20B is text-only and cannot analyze images. For image support, you would need to set up a vision model separately.
 
 6. Run it:
    ```npm
