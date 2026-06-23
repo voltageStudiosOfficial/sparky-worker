@@ -58,7 +58,7 @@ Content-Type: application/json
 - `DISCORD_PUBLIC_KEY` - Your Discord application public key in hex format (for Ed25519 signature verification)
 - `DISCORD_APP_ID` - Your Discord application ID (for registering slash commands)
 - `OPENROUTER_API_KEY` - OpenRouter API key for AI responses
-- `PRIMARY_MODEL` - Model to use (e.g., "openai/gpt-3.5-turbo"). If not set, defaults to `openrouter/gpt-oss-20b` (free endpoint)
+- `PRIMARY_MODEL` - Model to use (e.g., "openai/gpt-3.5-turbo"). If not set, defaults to `openrouter/gpt-oss-20b:free` (free endpoint)
 
 **Setup:**
 1. Create a Discord application at https://discord.com/developers/applications
@@ -213,7 +213,7 @@ vars = {
 }
 ```
 
-**Note:** `PRIMARY_MODEL` is optional. If not provided, Sparky will use `openrouter/gpt-oss-20b` as a free fallback.
+**Note:** `PRIMARY_MODEL` is optional. If not provided, Sparky will use `openrouter/gpt-oss-20b:free` as a free fallback.
 
 ---
 

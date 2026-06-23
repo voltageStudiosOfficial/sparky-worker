@@ -53,7 +53,7 @@ Sparky is licensed under the AGPLv3 License. See the [LICENSE](https://github.co
    DISCORD_APP_ID=your_discord_application_id
    ```
    
-   **Note:** Sparky now **always** uses `openrouter/gpt-oss-20b` (the free :free endpoint) for chat responses.
+   **Note:** Sparky now **always** uses `openrouter/gpt-oss-20b:free` for chat responses.
    The `PRIMARY_MODEL` variable is ignored - we always use the free GPT-OSS 20B.
    
    **For voice messages:** Voice transcription requires `OPENROUTER_API_KEY` and uses OpenRouter's free whisper-1 model.

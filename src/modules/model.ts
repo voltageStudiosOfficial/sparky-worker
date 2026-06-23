@@ -2,7 +2,7 @@ import type { Env } from "../types/index.js";
 
 // Use the free GPT-OSS 20B endpoint from OpenRouter
 // This is the free :free endpoint that doesn't cost anything
-const FREE_MODEL = "openrouter/gpt-oss-20b";
+const FREE_MODEL = "openrouter/gpt-oss-20b:free";
 
 // grab the ai model we're rockin with
 // Always uses the free GPT-OSS 20B :free endpoint
