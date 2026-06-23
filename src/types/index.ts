@@ -4,6 +4,7 @@ export interface Env {
   WEBHOOK_URL?: string;
   DISCORD_BOT_TOKEN?: string;
   DISCORD_PUBLIC_KEY?: string;
+  DISCORD_APP_ID?: string;
   OPENAI_API_KEY?: string;
   SYSTEM_PROMPT?: string;
   PRIMARY_MODEL?: string;
@@ -15,6 +16,48 @@ export interface Env {
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
   content: string;
+  // For multimodal messages (images, etc.)
+  images?: string[];
+  audio?: string;
+}
+
+export interface TelegramPhotoSize {
+  file_id: string;
+  file_unique_id: string;
+  width?: number;
+  height?: number;
+  file_size?: number;
+}
+
+export interface TelegramVoice {
+  file_id: string;
+  file_unique_id: string;
+  duration: number;
+  mime_type?: string;
+  file_size?: number;
+}
+
+export interface TelegramDocument {
+  file_id: string;
+  file_unique_id: string;
+  file_name?: string;
+  mime_type?: string;
+  file_size?: number;
+}
+
+export interface TelegramEntity {
+  type: "mention" | "text_mention" | "bot_command" | string;
+  offset: number;
+  length: number;
+  user?: { id: number; username?: string; first_name?: string };
+}
+
+export interface TelegramUser {
+  id: number;
+  is_bot?: boolean;
+  first_name: string;
+  username?: string;
+  language_code?: string;
 }
 
 export interface AIResponse {
@@ -28,18 +71,38 @@ export interface AIResponse {
 
 export interface TelegramMessage {
   text?: string;
-  from?: {
+  from?: TelegramUser;
+  chat: {
+    id: number;
+    type?: string;
     username?: string;
     first_name?: string;
   };
-  chat: {
-    id: number;
-  };
   message_id: number;
+  date?: number;
+  
+  // Media
+  photo?: TelegramPhotoSize[];
+  voice?: TelegramVoice;
+  document?: TelegramDocument;
+  audio?: TelegramVoice;
+  video?: TelegramVoice;
+  video_note?: TelegramVoice;
+  
+  // Mentions and entities
+  entities?: TelegramEntity[];
+  caption?: string;
+  caption_entities?: TelegramEntity[];
+  
+  // Reply info
+  reply_to_message?: TelegramMessage;
 }
 
 export interface TelegramUpdate {
-  message: TelegramMessage;
+  message?: TelegramMessage;
+  edited_message?: TelegramMessage;
+  channel_post?: TelegramMessage;
+  edited_channel_post?: TelegramMessage;
 }
 
 export interface MemoryStore {
@@ -51,14 +114,40 @@ export interface TypingSignal {
 }
 
 // Discord types
+export interface DiscordAttachment {
+  id: string;
+  filename: string;
+  content_type?: string;
+  size: number;
+  url: string;
+  proxy_url: string;
+  width?: number;
+  height?: number;
+}
+
+export interface DiscordMention {
+  id: string;
+  username: string;
+  bot?: boolean;
+}
+
 export interface DiscordMessage {
   id: string;
   content: string;
   author: {
     id: string;
     username: string;
+    bot?: boolean;
+    discriminator?: string;
   };
   channel_id: string;
+  guild_id?: string;
+  attachments?: DiscordAttachment[];
+  mentions?: DiscordMention[];
+  mention_everyone?: boolean;
+  mention_roles?: string[];
+  // For message components (buttons, etc.)
+  components?: any[];
 }
 
 export interface DiscordInteraction {
@@ -68,18 +157,25 @@ export interface DiscordInteraction {
     options?: Array<{
       name: string;
       value: string;
+      type?: number;
     }>;
+    attachments?: DiscordAttachment[];
+    resolved?: any;
   };
   message?: DiscordMessage;
   member?: {
     user: {
       id: string;
       username: string;
+      bot?: boolean;
     };
+    roles?: string[];
   };
   token: string;
   guild_id?: string;
   channel_id?: string;
+  // For application commands with attachments
+  application_id?: string;
 }
 
 // OpenAI-like endpoint types

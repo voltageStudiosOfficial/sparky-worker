@@ -46,7 +46,18 @@ Sparky is licensed under the AGPLv3 License. See the [LICENSE](https://github.co
    OPENROUTER_API_KEY=your_key_here
    PRIMARY_MODEL=openai/gpt-4-turbo
    SYSTEM_PROMPT=You are Sparky, a helpful AI assistant
+   
+   # Discord configuration (optional)
+   DISCORD_BOT_TOKEN=your_discord_bot_token
+   DISCORD_PUBLIC_KEY=your_discord_public_key_hex
+   DISCORD_APP_ID=your_discord_application_id
    ```
+   
+   **Note:** If `PRIMARY_MODEL` is not set, Sparky will automatically use `openrouter/gpt-oss-20b` (free endpoint).
+   
+   **For voice messages:** Voice transcription requires `OPENROUTER_API_KEY` and uses OpenRouter's whisper-1 model.
+   
+   **For images:** Vision models (like gpt-4o, claude-3, gemini-pro-vision) can analyze images sent as photos or documents.
 
 6. Run it:
    ```npm

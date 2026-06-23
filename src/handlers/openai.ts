@@ -45,25 +45,8 @@ export async function handleOpenAIChatCompletions(
     );
   }
 
-  const model = request.model || getModel(env) || "";
+  const model = request.model || getModel(env);
   const messages = request.messages || [];
-
-  if (!model) {
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "model not configured",
-          type: "invalid_request_error",
-          param: "model",
-          code: "invalid_request_error",
-        },
-      }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return new Response(

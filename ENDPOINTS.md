@@ -55,15 +55,18 @@ Content-Type: application/json
 
 **Environment Variables Required:**
 - `DISCORD_BOT_TOKEN` - Your Discord bot token
-- `DISCORD_PUBLIC_KEY` - Your Discord application public key (for signature verification)
+- `DISCORD_PUBLIC_KEY` - Your Discord application public key in hex format (for Ed25519 signature verification)
+- `DISCORD_APP_ID` - Your Discord application ID (for registering slash commands)
 - `OPENROUTER_API_KEY` - OpenRouter API key for AI responses
-- `PRIMARY_MODEL` - Model to use (e.g., "openai/gpt-3.5-turbo")
+- `PRIMARY_MODEL` - Model to use (e.g., "openai/gpt-3.5-turbo"). If not set, defaults to `openrouter/gpt-oss-20b` (free endpoint)
 
 **Setup:**
 1. Create a Discord application at https://discord.com/developers/applications
 2. Enable "Message Content Intent" in Bot settings
-3. Create slash commands `/chat` and `/reset` (or use the `registerDiscordCommands` utility)
-4. Set the webhook URL to: `https://your-worker-url.workers.dev/discord`
+3. Get your **Public Key** from the General Information tab (copy the hex value)
+4. Get your **Application ID** from the General Information tab
+5. Create slash commands `/chat` and `/reset` (or use the `registerDiscordCommands` utility)
+6. Set the webhook URL to: `https://your-worker-url.workers.dev/discord`
 
 ---
 
@@ -201,7 +204,8 @@ vars = {
   OPENROUTER_API_KEY = "your-key",
   TELEGRAM_BOT_TOKEN = "your-token",
   DISCORD_BOT_TOKEN = "your-token",
-  DISCORD_PUBLIC_KEY = "your-public-key",
+  DISCORD_PUBLIC_KEY = "your-public-key-hex",
+  DISCORD_APP_ID = "your-application-id",
   OPENAI_API_KEY = "your-api-key",
   PRIMARY_MODEL = "openai/gpt-3.5-turbo",
   SYSTEM_PROMPT = "You are a helpful AI assistant.",
@@ -209,15 +213,23 @@ vars = {
 }
 ```
 
+**Note:** `PRIMARY_MODEL` is optional. If not provided, Sparky will use `openrouter/gpt-oss-20b` as a free fallback.
+
 ---
 
 ## Features
 
 - **Persistent Memory**: All platforms maintain conversation history per user
 - **Multiple AI Models**: Support for any model available via OpenRouter
-- **Signature Verification**: Discord interaction verification (placeholder for nacl implementation)
+- **Signature Verification**: Discord interaction verification using Ed25519
 - **Error Handling**: Comprehensive error messages and logging
 - **OpenAI Compatibility**: Use any OpenAI-compatible client library
+- **Multimedia Support**: 
+  - **Images**: Vision models can analyze photos and image documents
+  - **Voice Messages**: Automatic transcription using Whisper
+  - **Documents**: Support for various file types
+- **Mention Support**: Bot responds when mentioned with @username or in reply to its messages
+- **Group Chat Support**: Only responds in groups when mentioned or replied to
 
 ---
 

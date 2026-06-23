@@ -51,8 +51,9 @@ export default {
     // discord webhook
     if (url.pathname === "/discord") {
       try {
-        const interaction = (await req.json()) as DiscordInteraction;
-        return await handleDiscordInteraction(env, interaction);
+        const body = await req.text();
+        const interaction = JSON.parse(body) as DiscordInteraction;
+        return await handleDiscordInteraction(env, req, body, interaction);
       } catch (error) {
         console.log("discord took an L:", error);
         return new Response("ok");
